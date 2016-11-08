@@ -755,7 +755,7 @@ class PHPCrawler
     $this->LinkCache->addURLs($PageInfo->links_found_url_descriptors);
     
      // Mark URL as "followed"
-    $this->LinkCache->markUrlAsFollowed($UrlDescriptor);
+    $this->LinkCache->markUrlAsFollowed($UrlDescriptor, $PageInfo->http_status_code);
     
     PHPCrawlerBenchmark::resetAll(array("crawling_process"));
     

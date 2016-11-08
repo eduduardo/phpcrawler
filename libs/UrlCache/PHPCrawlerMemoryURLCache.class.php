@@ -146,7 +146,7 @@ class PHPCrawlerMemoryURLCache extends PHPCrawlerURLCacheBase
   /**
    * Has no function in this memory-cache.
    */
-  public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor)
+  public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor, $http_code)
   {
   }
   

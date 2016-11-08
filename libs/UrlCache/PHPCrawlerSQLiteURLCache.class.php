@@ -180,11 +180,11 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
    *
    * @param PHPCrawlerURLDescriptor $UrlDescriptor
    */
-  public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor)
+  public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor, $http_code)
   {
     PHPCrawlerBenchmark::start("marking_url_as_followes");
     $hash = md5($UrlDescriptor->url_rebuild);
-    $this->PDO->exec("UPDATE urls SET processed = 1, in_process = 0 WHERE distinct_hash = '".$hash."';");
+    $this->PDO->exec("UPDATE urls SET processed = 1, in_process = 0, http_code = ' . $http_code . ' WHERE distinct_hash = '".$hash."';");
     PHPCrawlerBenchmark::stop("marking_url_as_followes");
   }
 
@@ -259,6 +259,7 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
                                                          refering_url TEXT,
                                                          url_rebuild TEXT,
                                                          is_redirect_url bool,
+                                                         http_code integer,
                                                          url_link_depth integer);");
 
       // Create indexes (seems that indexes make the whole thingy slower)

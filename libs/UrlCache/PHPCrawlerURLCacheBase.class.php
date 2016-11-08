@@ -65,7 +65,7 @@ abstract class PHPCrawlerURLCacheBase
    *
    * @param PHPCrawlerURLDescriptor $UrlDescriptor
    */
-  abstract public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor);
+  abstract public function markUrlAsFollowed(PHPCrawlerURLDescriptor $UrlDescriptor, $http_code);
   
   /**
    * Do cleanups after the cache is not needed anymore
