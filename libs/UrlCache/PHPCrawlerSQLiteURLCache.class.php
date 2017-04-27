@@ -184,7 +184,11 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   {
     PHPCrawlerBenchmark::start("marking_url_as_followes");
     $hash = md5($UrlDescriptor->url_rebuild);
-    $this->PDO->exec("UPDATE urls SET processed = 1, in_process = 0, http_code = " . $http_code . " WHERE distinct_hash = '".$hash."';");
+    try {
+      $this->PDO->exec("UPDATE urls SET processed = 1, in_process = 0, http_code = " . $http_code . " WHERE distinct_hash = '".$hash."';");
+    } catch (Exception $e) {
+
+    }
     PHPCrawlerBenchmark::stop("marking_url_as_followes");
   }
 
