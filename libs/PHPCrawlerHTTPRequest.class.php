@@ -552,6 +552,7 @@ class PHPCrawlerHTTPRequest
       {
         $context = stream_context_create(array(
             'ssl' => array(
+                'verify_peer' => false,
                 $serverName => $this->url_parts["host"],
             ),
         ));
