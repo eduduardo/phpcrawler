@@ -144,32 +144,37 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   public function addURLs($urls)
   {
     PHPCrawlerBenchmark::start("adding_urls_to_sqlitecache");
+    try {
+      $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION;");
 
-    $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION;");
-
-    $cnt = count($urls);
-    for ($x=0; $x<$cnt; $x++)
-    {
-      if ($urls[$x] != null)
+      $cnt = count($urls);
+      for ($x=0; $x<$cnt; $x++)
       {
-        $this->addURL($urls[$x]);
+        if ($urls[$x] != null)
+        {
+          $this->addURL($urls[$x]);
+        }
+
+        // Commit after 1000 URLs (reduces memory-usage)
+        if ($x%1000 == 0 && $x > 0)
+        {
+          $this->PDO->exec("COMMIT;");
+          $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION;");
+        }
       }
 
-      // Commit after 1000 URLs (reduces memory-usage)
-      if ($x%1000 == 0 && $x > 0)
+      $this->PDO->exec("COMMIT;");
+      $this->PreparedInsertStatement->closeCursor();
+
+      if ($this->db_analyzed == false)
       {
-        $this->PDO->exec("COMMIT;");
-        $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION;");
+        $this->PDO->exec("ANALYZE;");
+        $this->db_analyzed = true;
       }
-    }
-
-    $this->PDO->exec("COMMIT;");
-    $this->PreparedInsertStatement->closeCursor();
-
-    if ($this->db_analyzed == false)
-    {
-      $this->PDO->exec("ANALYZE;");
-      $this->db_analyzed = true;
+    } catch (\PDOException $e){
+       
+    } catch (\Exception $e){
+      
     }
 
     PHPCrawlerBenchmark::stop("adding_urls_to_sqlitecache");
