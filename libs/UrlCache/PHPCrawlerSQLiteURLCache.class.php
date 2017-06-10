@@ -54,7 +54,7 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   public function getNextUrl()
   {
     PHPCrawlerBenchmark::start("fetching_next_url_from_sqlitecache");
-
+    try {
     $ok = $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION");
 
     // Get row with max priority-level
@@ -76,7 +76,11 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
     $this->PDO->exec("UPDATE urls SET in_process = 1 WHERE id = ".$row["id"].";");
 
     $this->PDO->exec("COMMIT;");
-
+    } catch (PDOException $e){
+       
+    } catch (Exception $e){
+      
+    }
     PHPCrawlerBenchmark::stop("fetching_next_url_from_sqlitecache");
 
     // Return URL
@@ -95,8 +99,14 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
    */
   public function clear()
   {
+     try {
     $this->PDO->exec("DELETE FROM urls;");
     $this->PDO->exec("VACUUM;");
+     } catch (PDOException $e){
+       
+    } catch (Exception $e){
+      
+    }
   }
 
   /**
@@ -171,9 +181,9 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
         $this->PDO->exec("ANALYZE;");
         $this->db_analyzed = true;
       }
-    } catch (\PDOException $e){
+    } catch (PDOException $e){
        
-    } catch (\Exception $e){
+    } catch (Exception $e){
       
     }
 
@@ -205,7 +215,7 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   public function containsURLs()
   {
     PHPCrawlerBenchmark::start("checking_for_urls_in_cache");
-
+    try {
     $Result = $this->PDO->query("SELECT id FROM urls WHERE processed = 0 OR in_process = 1 LIMIT 1;");
 
     $has_columns = $Result->fetchColumn();
@@ -219,6 +229,11 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
       return true;
     }
     else return false;
+    } catch (PDOException $e){
+       
+    } catch (Exception $e){
+      
+    }
   }
 
   /**
@@ -227,7 +242,13 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   public function purgeCache()
   {
     // Set "in_process" to 0 for all URLs
-    $this->PDO->exec("UPDATE urls SET in_process = 0;");
+    try {
+      $this->PDO->exec("UPDATE urls SET in_process = 0;");
+    } catch (PDOException $e){
+       
+    } catch (Exception $e){
+      
+    }
   }
 
   /**
