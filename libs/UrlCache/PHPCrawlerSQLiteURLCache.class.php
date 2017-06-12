@@ -54,8 +54,7 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
   public function getNextUrl()
   {
     PHPCrawlerBenchmark::start("fetching_next_url_from_sqlitecache");
-    try {
-    $ok = $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION");
+     $ok = $this->PDO->exec("BEGIN EXCLUSIVE TRANSACTION");
 
     // Get row with max priority-level
     $Result = $this->PDO->query("SELECT max(priority_level) AS max_priority_level FROM urls WHERE in_process = 0 AND processed = 0;");
@@ -76,11 +75,6 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
     $this->PDO->exec("UPDATE urls SET in_process = 1 WHERE id = ".$row["id"].";");
 
     $this->PDO->exec("COMMIT;");
-    } catch (PDOException $e){
-       
-    } catch (Exception $e){
-      
-    }
     PHPCrawlerBenchmark::stop("fetching_next_url_from_sqlitecache");
 
     // Return URL
@@ -272,8 +266,8 @@ class PHPCrawlerSQLiteURLCache extends PHPCrawlerURLCacheBase
 
     $this->PDO->exec("PRAGMA journal_mode = OFF");
 
-    $this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $this->PDO->setAttribute(PDO::ATTR_TIMEOUT, 100);
+    $this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+    $this->PDO->setAttribute(PDO::ATTR_TIMEOUT, 3000);
 
     if ($create_tables == true)
     {
