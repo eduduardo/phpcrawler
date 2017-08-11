@@ -923,6 +923,7 @@ class PHPCrawlerHTTPRequest
 
     $headerlines[] = "User-Agent: ".str_replace("\n", "", $this->userAgentString)."\r\n";
     $headerlines[] = "Accept: */*\r\n";
+    $headerlines[] = "Accept-Language: pt-BR, pt;q=0.9\r\n";
 
     // Request GZIP-content
     if ($this->request_gzip_content == true)
